@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Anthony Colombo" />
+
+
+<title>imcExperiment: containerization of IMC data</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">imcExperiment: containerization of IMC data</h1>
+<h4 class="author">Anthony Colombo</h4>
+<h4 class="date">18 August, 2021</h4>
+
+
+
+<div id="heatmap-plotting-script-helper" class="section level1">
+<h1>Heatmap plotting script (helper)</h1>
+<ul>
+<li>The heatmap function we do not want to include with this package, but here is the helper function.</li>
+</ul>
+</div>
+<div id="example" class="section level1">
+<h1>example</h1>
+<ul>
+<li>The IMC container contains slots for intensity, coordinates, neighborhood features, networking ID, distance measures, morphology, unique cell labels, panel information, and ROIID.</li>
+<li>The input to the imcExperiment object has the cells (columns) and rows are the proteins.<br />
+</li>
+<li>For spatial features, the rows are the cells, and columns are the spatial features. the 2-dim coordinates (x,y), neighborHood features, network assignment, unique Label, ROIID, and distance matrix. These data are required for the constructure but can be edited later.</li>
+<li>The IMC container inherits many function used for SummarizedExperiment classes (assays, etc).</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(imcExperiment)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">showClass</span>(<span class="st">&quot;imcExperiment&quot;</span>)</span></code></pre></div>
+<pre><code>## Class &quot;imcExperiment&quot; [package &quot;imcExperiment&quot;]
+## 
+## Slots:
+##                                                                 
+## Name:                   coordinates                cellIntensity
+## Class:                       matrix                       matrix
+##                                                                 
+## Name:                  neighborHood                      network
+## Class:                       matrix                   data.frame
+##                                                                 
+## Name:                      distance                   morphology
+## Class:                       matrix                       matrix
+##                                                                 
+## Name:                   uniqueLabel          int_elementMetadata
+## Class:                    character                    DataFrame
+##                                                                 
+## Name:                   int_colData                 int_metadata
+## Class:                    DataFrame                         list
+##                                                                 
+## Name:                     rowRanges                      colData
+## Class: GenomicRanges_OR_GRangesList                    DataFrame
+##                                                                 
+## Name:                        assays                        NAMES
+## Class:               Assays_OR_NULL            character_OR_NULL
+##                                                                 
+## Name:               elementMetadata                     metadata
+## Class:                    DataFrame                         list
+## 
+## Extends: 
+## Class &quot;SingleCellExperiment&quot;, directly
+## Class &quot;RangedSummarizedExperiment&quot;, by class &quot;SingleCellExperiment&quot;, distance 2
+## Class &quot;SummarizedExperiment&quot;, by class &quot;SingleCellExperiment&quot;, distance 3
+## Class &quot;RectangularData&quot;, by class &quot;SingleCellExperiment&quot;, distance 4
+## Class &quot;Vector&quot;, by class &quot;SingleCellExperiment&quot;, distance 4
+## Class &quot;Annotated&quot;, by class &quot;SingleCellExperiment&quot;, distance 5
+## Class &quot;vector_OR_Vector&quot;, by class &quot;SingleCellExperiment&quot;, distance 5</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#10 cells with 10 proteins</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 10 neighbors </span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a> <span class="co"># and square distance matrix</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a> <span class="co"># note that for SCE objects the columns are the cells, and rows are proteins</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">&lt;-</span><span class="fu">imcExperiment</span>(<span class="at">cellIntensity=</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">coordinates=</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">2</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">neighborHood=</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">network=</span><span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>)),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">distance=</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">morphology=</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">uniqueLabel=</span><span class="fu">paste0</span>(<span class="st">&quot;A&quot;</span>,<span class="fu">seq_len</span>(<span class="dv">10</span>)),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel=</span>letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>],</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">ROIID=</span><span class="fu">data.frame</span>(<span class="at">ROIID=</span><span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>,<span class="dv">10</span>)))</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a> <span class="co">#7 cells with 10 proteins</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a> <span class="co"># but the spatial information is 10 rows and this will fail to build.</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a> <span class="co">#x&lt;-imcExperiment(cellIntensity=matrix(1,nrow=7,ncol=10),</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   coordinates=matrix(1,nrow=10,ncol=2),</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   neighborHood=matrix(1,nrow=10,ncol=20),</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   network=matrix(1,nrow=10,ncol=3),</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#   distance=matrix(1,nrow=10,ncol=2),</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   uniqueLabel=rep(&quot;A&quot;,10),</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   ROIID=data.frame(ROIID=rep(&quot;A&quot;,10)))</span></span></code></pre></div>
+<div id="accessors-and-setters" class="section level3">
+<h3>Accessors, and setters</h3>
+<ul>
+<li>the cellIntensity() function accesses cell Intensity</li>
+<li>getCoordinates() accesses spatial data.</li>
+<li>getNeighborhood() access the histoCAT neighborhood features</li>
+<li>getDistance() accesses distance matrix input.</li>
+<li>getMorphology() accesses morphology features.</li>
+<li>the metadata() function can store extras .</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get cellintensities</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cellIntensity</span>(x)</span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]    1    1    1    1    1    1    1    1    1     1
+##  [2,]    1    1    1    1    1    1    1    1    1     1
+##  [3,]    1    1    1    1    1    1    1    1    1     1
+##  [4,]    1    1    1    1    1    1    1    1    1     1
+##  [5,]    1    1    1    1    1    1    1    1    1     1
+##  [6,]    1    1    1    1    1    1    1    1    1     1
+##  [7,]    1    1    1    1    1    1    1    1    1     1
+##  [8,]    1    1    1    1    1    1    1    1    1     1
+##  [9,]    1    1    1    1    1    1    1    1    1     1
+## [10,]    1    1    1    1    1    1    1    1    1     1</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#set intensities</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  newIn<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="dv">2</span>,<span class="dv">5</span>),<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(newIn)<span class="ot">&lt;-</span><span class="fu">rownames</span>(x)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(newIn)<span class="ot">&lt;-</span><span class="fu">colnames</span>(x)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">cellIntensity</span>(x)<span class="ot">&lt;-</span>newIn</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cellIntensity</span>(x)<span class="sc">==</span>newIn</span></code></pre></div>
+<pre><code>##     A1   A2   A3   A4   A5   A6   A7   A8   A9  A10
+## a TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## b TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## c TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## d TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## e TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## f TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## g TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## h TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## i TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## j TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># if we want to store both the raw and normalized values in assays we can.</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">assays</span>(x,<span class="at">withDimnames =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>raw<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#store the normalized values.</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">cellIntensity</span>(x)<span class="ot">&lt;-</span><span class="fu">asinh</span>(<span class="fu">counts</span>(x)<span class="sc">/</span><span class="fl">0.5</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">all</span>(<span class="fu">cellIntensity</span>(x)<span class="sc">==</span><span class="fu">asinh</span>(<span class="fu">assays</span>(x)<span class="sc">$</span>counts<span class="sc">/</span><span class="fl">0.5</span>))</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  x</span></code></pre></div>
+<pre><code>## class: imcExperiment 
+## dim: 10 10 
+## metadata(0):
+## assays(2): counts raw
+## rownames(10): a b ... i j
+## rowData names(0):
+## colnames(10): A1 A2 ... A9 A10
+## colData names(1): ROIID
+## reducedDimNames(0):
+## mainExpName: NULL
+## altExpNames(0):</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a> <span class="do">## access the coordinates</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getCoordinates</span>(x)</span></code></pre></div>
+<pre><code>##       [,1] [,2]
+##  [1,]    1    1
+##  [2,]    1    1
+##  [3,]    1    1
+##  [4,]    1    1
+##  [5,]    1    1
+##  [6,]    1    1
+##  [7,]    1    1
+##  [8,]    1    1
+##  [9,]    1    1
+## [10,]    1    1</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getCoordinates</span>(x)<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">20</span>,<span class="dv">0</span>,<span class="dv">10</span>),<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(  <span class="fu">getCoordinates</span>(x))</span></code></pre></div>
+<pre><code>##           [,1]        [,2]
+## [1,]  1.138630   0.4920486
+## [2,] -7.483197  14.0072048
+## [3,] -2.995988   5.7263834
+## [4,] -3.952030 -11.4399828
+## [5,]  8.534859  -2.8095482
+## [6,]  9.879779  19.3120798</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a> <span class="do">## access the neighborhood profile.  Note each row must equal the number of cells, but the columns can be extended depending on the radius of interactions.</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">## access the coordinates</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getNeighborhood</span>(x)</span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]    1    1    1    1    1    1    1    1    1     1
+##  [2,]    1    1    1    1    1    1    1    1    1     1
+##  [3,]    1    1    1    1    1    1    1    1    1     1
+##  [4,]    1    1    1    1    1    1    1    1    1     1
+##  [5,]    1    1    1    1    1    1    1    1    1     1
+##  [6,]    1    1    1    1    1    1    1    1    1     1
+##  [7,]    1    1    1    1    1    1    1    1    1     1
+##  [8,]    1    1    1    1    1    1    1    1    1     1
+##  [9,]    1    1    1    1    1    1    1    1    1     1
+## [10,]    1    1    1    1    1    1    1    1    1     1</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getNeighborhood</span>(x)<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="dv">1</span>,<span class="dv">5</span>),<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">head</span>( <span class="fu">getNeighborhood</span>(x))</span></code></pre></div>
+<pre><code>##             [,1]      [,2]        [,3]      [,4]      [,5]      [,6]       [,7]
+## [1,] -11.5292016  5.750663  5.32795370 -8.018236  1.701827 -5.041385  4.7460738
+## [2,]  -1.1284688  5.185412 -0.12147623 -1.805766  4.498192  7.648025  0.6660934
+## [3,]  -0.2312129  6.175255 -4.87813785 10.450752 -1.764999  1.617683 -0.3658961
+## [4,]  -6.6399166 -7.081547  5.61946737  7.130634  4.629363  6.306020  4.5311604
+## [5,]   7.9826941  6.890117  0.01332724  6.049404  1.661246 -2.705478 -7.2621050
+## [6,]   3.4256881 -1.114269 -7.27957485  4.411063  2.104813 10.298950 -1.4588797
+##            [,8]       [,9]      [,10]
+## [1,]  1.4981864  8.2157026 -4.0862024
+## [2,] -6.2570109  3.2871688 -6.7956895
+## [3,] -1.6710766  4.0130912 -1.6708544
+## [4,] -0.3772099 -1.6926917 -0.7368132
+## [5,] -4.9718817 -4.1329155  4.3349482
+## [6,]  7.8650851  0.8307328 -0.4697563</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a> <span class="do">## get the distance usually a square matrix, or can be just first nearest etc. </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">getDistance</span>(x)</span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]    1    1    1    1    1    1    1    1    1     1
+##  [2,]    1    1    1    1    1    1    1    1    1     1
+##  [3,]    1    1    1    1    1    1    1    1    1     1
+##  [4,]    1    1    1    1    1    1    1    1    1     1
+##  [5,]    1    1    1    1    1    1    1    1    1     1
+##  [6,]    1    1    1    1    1    1    1    1    1     1
+##  [7,]    1    1    1    1    1    1    1    1    1     1
+##  [8,]    1    1    1    1    1    1    1    1    1     1
+##  [9,]    1    1    1    1    1    1    1    1    1     1
+## [10,]    1    1    1    1    1    1    1    1    1     1</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getDistance</span>(x)<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="dv">1</span>,<span class="dv">5</span>),<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">10</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="fu">getDistance</span>(x))</span></code></pre></div>
+<pre><code>##            [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]
+## [1,] -4.4459580 0.3832962  1.2861954  5.191198  8.1144338  1.250347  3.5746833
+## [2,]  2.2501458 8.5357020  6.0879762 -1.389698 -0.7572171  1.056745  3.4762454
+## [3,]  1.8648350 7.6683573 -6.1207535  8.613386 -3.3720330 -1.958730  3.3212437
+## [4,]  3.6676806 0.8794159  5.7258095 -3.174093  2.0034287  7.917606  3.1580990
+## [5,] -0.1038772 3.1644572  0.1525853 -5.029461  6.0548022  3.773487 -8.7464480
+## [6,]  3.9208435 8.4196328  2.5519046 -3.191540  8.7255777 -5.454160 -0.1319931
+##           [,8]      [,9]       [,10]
+## [1,] -1.414093 6.9717400   0.4301284
+## [2,]  5.167939 4.3821819   4.1317587
+## [3,]  8.287247 1.9860126 -10.6450490
+## [4,] -4.710048 0.4533308   8.1478340
+## [5,] -5.732384 3.8630923   5.3916885
+## [6,] -4.847652 2.3099469   6.9436779</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># get morphological features</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getMorphology</span>(x)</span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]    1    1    1    1    1    1    1    1    1     1
+##  [2,]    1    1    1    1    1    1    1    1    1     1
+##  [3,]    1    1    1    1    1    1    1    1    1     1
+##  [4,]    1    1    1    1    1    1    1    1    1     1
+##  [5,]    1    1    1    1    1    1    1    1    1     1
+##  [6,]    1    1    1    1    1    1    1    1    1     1
+##  [7,]    1    1    1    1    1    1    1    1    1     1
+##  [8,]    1    1    1    1    1    1    1    1    1     1
+##  [9,]    1    1    1    1    1    1    1    1    1     1
+## [10,]    1    1    1    1    1    1    1    1    1     1</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getMorphology</span>(x)<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="dv">1</span>,<span class="dv">5</span>),<span class="at">nrow=</span><span class="dv">10</span>,<span class="at">ncol=</span><span class="dv">60</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="fu">getMorphology</span>(x))</span></code></pre></div>
+<pre><code>##            [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]
+## [1,] -0.2602892 -2.873465 -1.1884496 -8.110879  7.1433864 -3.124403  0.6445156
+## [2,]  6.6712063  4.358327  0.8852602 -1.839347  4.7459084  2.049456  3.0144223
+## [3,]  0.4508546  7.471209 -3.1749765 -4.185419  9.9250273  2.718686  4.2543621
+## [4,]  5.3070444 -1.126719 -2.4471718 -6.437787  2.1392430  3.716662  9.4709743
+## [5,]  0.2663402  1.076424 -2.7057904 -1.810752 -0.6675042  2.135795 -6.5746575
+## [6,] -0.9224336 11.654316  2.2870520  4.787939  0.4979738 -4.675196 -6.1942677
+##            [,8]       [,9]     [,10]      [,11]     [,12]      [,13]     [,14]
+## [1,] -0.1020808  0.5043882 -2.792838 -0.2602892 -2.873465 -1.1884496 -8.110879
+## [2,] -3.7028341  2.9473449 -1.527435  6.6712063  4.358327  0.8852602 -1.839347
+## [3,]  2.5449114  1.8542034  2.661986  0.4508546  7.471209 -3.1749765 -4.185419
+## [4,]  8.8134069  7.8361904  3.072036  5.3070444 -1.126719 -2.4471718 -6.437787
+## [5,] 16.7918222 -1.0880037  3.122839  0.2663402  1.076424 -2.7057904 -1.810752
+## [6,] -2.0700062 -1.1436743  3.858231 -0.9224336 11.654316  2.2870520  4.787939
+##           [,15]     [,16]      [,17]      [,18]      [,19]     [,20]      [,21]
+## [1,]  7.1433864 -3.124403  0.6445156 -0.1020808  0.5043882 -2.792838 -0.2602892
+## [2,]  4.7459084  2.049456  3.0144223 -3.7028341  2.9473449 -1.527435  6.6712063
+## [3,]  9.9250273  2.718686  4.2543621  2.5449114  1.8542034  2.661986  0.4508546
+## [4,]  2.1392430  3.716662  9.4709743  8.8134069  7.8361904  3.072036  5.3070444
+## [5,] -0.6675042  2.135795 -6.5746575 16.7918222 -1.0880037  3.122839  0.2663402
+## [6,]  0.4979738 -4.675196 -6.1942677 -2.0700062 -1.1436743  3.858231 -0.9224336
+##          [,22]      [,23]     [,24]      [,25]     [,26]      [,27]      [,28]
+## [1,] -2.873465 -1.1884496 -8.110879  7.1433864 -3.124403  0.6445156 -0.1020808
+## [2,]  4.358327  0.8852602 -1.839347  4.7459084  2.049456  3.0144223 -3.7028341
+## [3,]  7.471209 -3.1749765 -4.185419  9.9250273  2.718686  4.2543621  2.5449114
+## [4,] -1.126719 -2.4471718 -6.437787  2.1392430  3.716662  9.4709743  8.8134069
+## [5,]  1.076424 -2.7057904 -1.810752 -0.6675042  2.135795 -6.5746575 16.7918222
+## [6,] 11.654316  2.2870520  4.787939  0.4979738 -4.675196 -6.1942677 -2.0700062
+##           [,29]     [,30]      [,31]     [,32]      [,33]     [,34]      [,35]
+## [1,]  0.5043882 -2.792838 -0.2602892 -2.873465 -1.1884496 -8.110879  7.1433864
+## [2,]  2.9473449 -1.527435  6.6712063  4.358327  0.8852602 -1.839347  4.7459084
+## [3,]  1.8542034  2.661986  0.4508546  7.471209 -3.1749765 -4.185419  9.9250273
+## [4,]  7.8361904  3.072036  5.3070444 -1.126719 -2.4471718 -6.437787  2.1392430
+## [5,] -1.0880037  3.122839  0.2663402  1.076424 -2.7057904 -1.810752 -0.6675042
+## [6,] -1.1436743  3.858231 -0.9224336 11.654316  2.2870520  4.787939  0.4979738
+##          [,36]      [,37]      [,38]      [,39]     [,40]      [,41]     [,42]
+## [1,] -3.124403  0.6445156 -0.1020808  0.5043882 -2.792838 -0.2602892 -2.873465
+## [2,]  2.049456  3.0144223 -3.7028341  2.9473449 -1.527435  6.6712063  4.358327
+## [3,]  2.718686  4.2543621  2.5449114  1.8542034  2.661986  0.4508546  7.471209
+## [4,]  3.716662  9.4709743  8.8134069  7.8361904  3.072036  5.3070444 -1.126719
+## [5,]  2.135795 -6.5746575 16.7918222 -1.0880037  3.122839  0.2663402  1.076424
+## [6,] -4.675196 -6.1942677 -2.0700062 -1.1436743  3.858231 -0.9224336 11.654316
+##           [,43]     [,44]      [,45]     [,46]      [,47]      [,48]      [,49]
+## [1,] -1.1884496 -8.110879  7.1433864 -3.124403  0.6445156 -0.1020808  0.5043882
+## [2,]  0.8852602 -1.839347  4.7459084  2.049456  3.0144223 -3.7028341  2.9473449
+## [3,] -3.1749765 -4.185419  9.9250273  2.718686  4.2543621  2.5449114  1.8542034
+## [4,] -2.4471718 -6.437787  2.1392430  3.716662  9.4709743  8.8134069  7.8361904
+## [5,] -2.7057904 -1.810752 -0.6675042  2.135795 -6.5746575 16.7918222 -1.0880037
+## [6,]  2.2870520  4.787939  0.4979738 -4.675196 -6.1942677 -2.0700062 -1.1436743
+##          [,50]      [,51]     [,52]      [,53]     [,54]      [,55]     [,56]
+## [1,] -2.792838 -0.2602892 -2.873465 -1.1884496 -8.110879  7.1433864 -3.124403
+## [2,] -1.527435  6.6712063  4.358327  0.8852602 -1.839347  4.7459084  2.049456
+## [3,]  2.661986  0.4508546  7.471209 -3.1749765 -4.185419  9.9250273  2.718686
+## [4,]  3.072036  5.3070444 -1.126719 -2.4471718 -6.437787  2.1392430  3.716662
+## [5,]  3.122839  0.2663402  1.076424 -2.7057904 -1.810752 -0.6675042  2.135795
+## [6,]  3.858231 -0.9224336 11.654316  2.2870520  4.787939  0.4979738 -4.675196
+##           [,57]      [,58]      [,59]     [,60]
+## [1,]  0.6445156 -0.1020808  0.5043882 -2.792838
+## [2,]  3.0144223 -3.7028341  2.9473449 -1.527435
+## [3,]  4.2543621  2.5449114  1.8542034  2.661986
+## [4,]  9.4709743  8.8134069  7.8361904  3.072036
+## [5,] -6.5746575 16.7918222 -1.0880037  3.122839
+## [6,] -6.1942677 -2.0700062 -1.1436743  3.858231</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a> <span class="do">## for each cell we can obtain the ROI that it belongs to</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowData</span>(x)</span></code></pre></div>
+<pre><code>## DataFrame with 10 rows and 0 columns</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a> <span class="do">## if we want to add patient features to each ROI we can</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  metas<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">ROIID=</span><span class="fu">factor</span>(<span class="fu">rep</span>(<span class="st">&quot;A&quot;</span>,<span class="dv">10</span>)),<span class="at">treatment=</span><span class="fu">factor</span>(<span class="fu">rep</span>(<span class="st">&#39;none&#39;</span>,<span class="dv">10</span>)))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colData</span>(x)<span class="ot">&lt;-</span><span class="fu">DataFrame</span>(metas)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a> <span class="do">##other slots for covariates</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">metadata</span>(x)<span class="sc">$</span>experiment<span class="ot">&lt;-</span><span class="st">&#39;test&#39;</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">metadata</span>(x)</span></code></pre></div>
+<pre><code>## $experiment
+## [1] &quot;test&quot;</code></pre>
+</div>
+<div id="from-histocat-to-r" class="section level3">
+<h3>From histoCAT to R</h3>
+<ul>
+<li>We use the raw histoCAT output and containerize the data.</li>
+</ul>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">### load the data from package.</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(imcExperiment)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a> <span class="do">##load the data 1000 cells from IMC experiment.</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data</span>(data)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dim</span>(data)</span></code></pre></div>
+<pre><code>## [1] 1000   62</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">##output from histoCAT to R</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  expr<span class="ot">&lt;-</span>data[,<span class="dv">3</span><span class="sc">:</span><span class="dv">36</span>]</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  normExp<span class="ot">&lt;-</span><span class="fu">percentilenormalize</span>(<span class="at">data=</span>expr,<span class="at">percentile=</span><span class="fl">0.99</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  normExp<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(normExp)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="do">##spatial component</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  spatial<span class="ot">&lt;-</span>(data[,<span class="fu">c</span>(<span class="st">&quot;X_position&quot;</span>,<span class="st">&quot;Y_position&quot;</span>)])</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  spatial<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(spatial)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a> <span class="do">##uniqueLabel</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  uniqueLabel<span class="ot">&lt;-</span><span class="fu">paste0</span>(data[,<span class="st">&quot;ImageId&quot;</span>],<span class="st">&quot;_&quot;</span>,data[,<span class="st">&quot;CellId&quot;</span>])</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a> phenotypes<span class="ot">&lt;-</span>data[,<span class="fu">grepl</span>(<span class="st">&quot;Phenograph&quot;</span>,<span class="fu">colnames</span>(data))]</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a> morph<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(data[,<span class="fu">c</span>(<span class="st">&quot;Area&quot;</span>,<span class="st">&quot;Eccentricity&quot;</span>,</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Solidity&quot;</span>,</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Extent&quot;</span>,</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Perimeter&quot;</span>)])</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">&lt;-</span><span class="fu">imcExperiment</span>(<span class="at">cellIntensity=</span><span class="fu">t</span>(normExp),</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">coordinates=</span>spatial,</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">neighborHood=</span><span class="fu">as.matrix</span>(data[,<span class="fu">grepl</span>(<span class="st">&quot;neighbour_&quot;</span>,<span class="fu">colnames</span>(data))]),</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">network=</span>phenotypes,</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">distance=</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="fu">nrow</span>(data),<span class="at">ncol=</span><span class="dv">10</span>),</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">morphology=</span>morph,</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel=</span><span class="fu">colnames</span>(normExp),</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">uniqueLabel=</span><span class="fu">paste0</span>(data<span class="sc">$</span>ImageId,<span class="st">&quot;_&quot;</span>,data<span class="sc">$</span>CellId),</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">ROIID=</span><span class="fu">data.frame</span>(<span class="at">ROIID=</span>data<span class="sc">$</span>ImageId))</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a> <span class="do">## explore the container.</span></span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dim</span>(<span class="fu">assay</span>(x))</span></code></pre></div>
+<pre><code>## [1]   34 1000</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>   <span class="fu">colData</span>(x)<span class="sc">$</span>treatment<span class="ot">&lt;-</span><span class="fu">DataFrame</span>(<span class="at">treatment=</span><span class="fu">rep</span>(<span class="st">&#39;none&#39;</span>,<span class="dv">1000</span>))</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">head</span>(<span class="fu">colData</span>(x))</span></code></pre></div>
+<pre><code>## DataFrame with 6 rows and 2 columns
+##              ROIID   treatment
+##          &lt;integer&gt; &lt;DataFrame&gt;
+## 274864_1    274864        none
+## 274864_2    274864        none
+## 274864_3    274864        none
+## 274864_4    274864        none
+## 274864_5    274864        none
+## 274864_6    274864        none</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">head</span>( <span class="fu">colnames</span>(x))</span></code></pre></div>
+<pre><code>## [1] &quot;274864_1&quot; &quot;274864_2&quot; &quot;274864_3&quot; &quot;274864_4&quot; &quot;274864_5&quot; &quot;274864_6&quot;</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(x)</span></code></pre></div>
+<pre><code>##  [1] &quot;marker1&quot;  &quot;marker2&quot;  &quot;marker3&quot;  &quot;marker4&quot;  &quot;marker5&quot;  &quot;marker6&quot; 
+##  [7] &quot;marker7&quot;  &quot;marker8&quot;  &quot;marker9&quot;  &quot;marker10&quot; &quot;marker11&quot; &quot;marker12&quot;
+## [13] &quot;marker13&quot; &quot;marker14&quot; &quot;marker15&quot; &quot;marker16&quot; &quot;marker17&quot; &quot;marker18&quot;
+## [19] &quot;marker19&quot; &quot;marker20&quot; &quot;marker21&quot; &quot;marker22&quot; &quot;marker23&quot; &quot;marker24&quot;
+## [25] &quot;marker25&quot; &quot;marker26&quot; &quot;marker27&quot; &quot;marker28&quot; &quot;marker29&quot; &quot;marker30&quot;
+## [31] &quot;marker31&quot; &quot;marker32&quot; &quot;marker33&quot; &quot;marker34&quot;</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Intensity</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">t</span>(<span class="fu">cellIntensity</span>(x))<span class="sc">==</span>normExp)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="fu">t</span>(<span class="fu">cellIntensity</span>(x)))</span></code></pre></div>
+<pre><code>##     marker1   marker2   marker3   marker4   marker5    marker6   marker7
+## 1 0.4656571 0.2736824 0.7237669 0.5204605 0.6330375 0.45935533 0.2857143
+## 2 0.3487101 0.2897530 0.3958101 0.3548617 0.5588399 0.11483883 0.5000000
+## 3 0.8883986 0.7622286 0.8866145 0.4873408 0.2400462 0.18374213 0.0000000
+## 4 0.3963552 0.1451175 0.2714126 1.0000000 0.2100260 0.19686657 0.0000000
+## 5 0.5407341 0.2522549 0.4221974 0.1064634 0.8991254 0.07655922 0.3333333
+## 6 1.0000000 0.7622286 0.0000000 0.7854187 0.2018387 0.82683960 0.8000000
+##     marker8   marker9  marker10   marker11  marker12   marker13  marker14
+## 1 0.4237137 0.1981346 0.5895631 0.38423632 0.5596034 1.00000000 0.5421737
+## 2 0.2118568 0.1812504 0.3699262 0.04531335 0.1284526 0.04016094 0.1667561
+## 3 0.4237137 0.6934055 0.2150245 0.69305332 1.0000000 0.11646341 0.4103197
+## 4 0.7263663 0.3632249 0.1866203 1.00000000 0.9999276 0.02467097 0.9450608
+## 5 0.3530947 0.1155895 0.8496593 0.55169689 0.1819642 0.06291782 0.1453909
+## 6 0.2542282 0.2731756 0.4462211 0.21726828 0.6036358 0.05220870 0.1539370
+##     marker15  marker16  marker17  marker18   marker19  marker20  marker21
+## 1 0.46990599 0.0952381 0.4987356 0.5269829 0.04774145 0.5735263 0.7197223
+## 2 0.15883470 0.1666667 0.4851215 0.4321421 0.34528973 0.3484509 0.4443348
+## 3 0.45147213 0.2666667 0.6154904 0.6206074 0.30741995 0.5060037 0.8448015
+## 4 0.07050581 0.5714286 0.4715074 0.4803021 0.04774145 0.4609886 0.1938211
+## 5 0.60815990 0.3333333 0.3834694 0.3128651 0.12438267 0.2171569 0.4567717
+## 6 0.58665373 0.4000000 1.0000000 1.0000000 0.08020126 0.6635565 0.4070243
+##    marker22  marker23   marker24  marker25   marker26  marker27  marker28
+## 1 0.4735184 0.9999835 0.12229278 0.2651672 0.19823739 1.0000000 0.2379700
+## 2 0.3429377 0.4963629 0.08592210 0.3093618 0.06938309 0.1036510 0.2082237
+## 3 0.4343442 0.6072488 0.40161962 0.3093618 0.11101294 1.0000000 0.6663160
+## 4 0.4735184 0.8192498 0.04747309 0.0000000 0.23788486 0.9639418 0.0000000
+## 5 0.4191098 0.3712448 0.22898012 0.3609221 0.00000000 0.4915438 0.2776317
+## 6 0.7085638 0.1612178 0.33178791 0.0000000 0.49955821 1.0000000 0.0000000
+##    marker29  marker30  marker31   marker32   marker33  marker34
+## 1 0.5826594 0.4963881 0.4285714 0.57132469 0.32432082 0.7448313
+## 2 0.1140364 0.3285300 0.1250000 0.53626613 0.44897580 0.2375474
+## 3 0.9637037 0.6810320 0.5000000 0.37811307 0.02758118 0.5500343
+## 4 1.0000000 0.8740688 0.8571429 0.13504038 0.07298397 0.9535425
+## 5 0.4187694 0.6712403 0.3333333 0.07271405 0.44188161 0.2307836
+## 6 0.3614079 0.9747837 0.3000000 1.00000000 0.54971323 0.5500343</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">##coordinate</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">getCoordinates</span>(x)<span class="sc">==</span>spatial)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="fu">getCoordinates</span>(x))</span></code></pre></div>
+<pre><code>##   X_position Y_position
+## 1   508.0000   3.000000
+## 2   672.1667   3.000000
+## 3   154.2000   4.200000
+## 4   538.5714   4.857143
+## 5   913.2778   3.444444
+## 6  1200.0000   4.200000</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#neighbor attraction data form histoCAT</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">all</span>(<span class="fu">getNeighborhood</span>(x)<span class="sc">==</span><span class="fu">as.matrix</span>(data[,<span class="fu">grepl</span>(<span class="st">&quot;neighbour_&quot;</span>,<span class="fu">colnames</span>(data))]))</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">head</span>(<span class="fu">getNeighborhood</span>((x)))</span></code></pre></div>
+<pre><code>##   neighbour_4_CellId1 neighbour_4_CellId2 neighbour_4_CellId3
+## 1                  36                 168                   0
+## 2                 144                   0                   0
+## 3                   0                   0                   0
+## 4                  67                  92                   0
+## 5                  13                  97                 249
+## 6                 135                   0                   0
+##   neighbour_4_CellId4 neighbour_4_CellId5 neighbour_4_CellId6
+## 1                   0                   0                   0
+## 2                   0                   0                   0
+## 3                   0                   0                   0
+## 4                   0                   0                   0
+## 5                   0                   0                   0
+## 6                   0                   0                   0
+##   neighbour_4_CellId7 neighbour_4_CellId8 neighbour_4_CellId9
+## 1                   0                   0                   0
+## 2                   0                   0                   0
+## 3                   0                   0                   0
+## 4                   0                   0                   0
+## 5                   0                   0                   0
+## 6                   0                   0                   0
+##   neighbour_4_CellId10
+## 1                    0
+## 2                    0
+## 3                    0
+## 4                    0
+## 5                    0
+## 6                    0</code></pre>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a> <span class="do">##phenotype cluster ID</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="fu">getNetwork</span>(x))</span></code></pre></div>
+<pre><code>##   (network)
+## 1         1
+## 2         1
+## 3         4
+## 4         4
+## 5         1
+## 6         1</code></pre>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">all</span>(<span class="fu">getNetwork</span>(x)<span class="sc">==</span>phenotypes)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a> <span class="do">###distance calculations</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="fu">getDistance</span>(x))</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,]    1    1    1    1    1    1    1    1    1     1
+## [2,]    1    1    1    1    1    1    1    1    1     1
+## [3,]    1    1    1    1    1    1    1    1    1     1
+## [4,]    1    1    1    1    1    1    1    1    1     1
+## [5,]    1    1    1    1    1    1    1    1    1     1
+## [6,]    1    1    1    1    1    1    1    1    1     1</code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">##morphology</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">all</span>(<span class="fu">getMorphology</span>(x)<span class="sc">==</span>morph)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="fu">getMorphology</span>(x))</span></code></pre></div>
+<pre><code>##   Area Eccentricity  Solidity    Extent Perimeter
+## 1   21    0.6956573 0.9545455 0.8400000    13.844
+## 2   24    0.8034622 0.9230769 0.6666667    16.565
+## 3   15    0.9014174 1.0000000 0.7142857    12.918
+## 4    7    0.8717717 0.8750000 0.5833333     7.683
+## 5   18    0.9593719 0.7500000 0.3214286    19.766
+## 6    5    0.7437865 1.0000000 0.5555556     5.814</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">##uniqueLabel</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">head</span>(<span class="fu">getLabel</span>(x))</span></code></pre></div>
+<pre><code>## [1] &quot;274864_1&quot; &quot;274864_2&quot; &quot;274864_3&quot; &quot;274864_4&quot; &quot;274864_5&quot; &quot;274864_6&quot;</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>   <span class="fu">all</span>(<span class="fu">getLabel</span>(x)<span class="sc">==</span><span class="fu">paste0</span>(data<span class="sc">$</span>ImageId,<span class="st">&quot;_&quot;</span>,data<span class="sc">$</span>CellId) )</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div id="pca-demo-analysis" class="section level3">
+<h3>PCA demo analysis</h3>
+<ul>
+<li>PCA data and tSNE coordinates can be added to the container.</li>
+</ul>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a> <span class="do">### inherited accessor.</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  pca_data <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">t</span>(<span class="fu">counts</span>(x)), <span class="at">rank=</span><span class="dv">50</span>)</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>tsDat<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">tsne.x=</span>data<span class="sc">$</span>tSNE4148542692_1,<span class="at">tsne.y=</span>data<span class="sc">$</span>tSNE4148542692_2,<span class="at">row.names=</span><span class="fu">colnames</span>(x))</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">reducedDims</span>(x)<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">PCA=</span>pca_data<span class="sc">$</span>x,<span class="at">TSNE=</span>tsDat)</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div>
+<pre><code>## class: imcExperiment 
+## dim: 34 1000 
+## metadata(0):
+## assays(1): counts
+## rownames(34): marker1 marker2 ... marker33 marker34
+## rowData names(0):
+## colnames(1000): 274864_1 274864_2 ... 274864_999 274864_1000
+## colData names(2): ROIID treatment
+## reducedDimNames(2): PCA TSNE
+## mainExpName: NULL
+## altExpNames(0):</code></pre>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">reducedDimNames</span>(x)</span></code></pre></div>
+<pre><code>## [1] &quot;PCA&quot;  &quot;TSNE&quot;</code></pre>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>     <span class="fu">dim</span>(<span class="fu">reducedDims</span>(x)<span class="sc">$</span>PCA)</span></code></pre></div>
+<pre><code>## [1] 1000   34</code></pre>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>     <span class="fu">dim</span>(<span class="fu">reducedDims</span>(x)<span class="sc">$</span>TSNE)</span></code></pre></div>
+<pre><code>## [1] 1000    2</code></pre>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a> imc<span class="ot">&lt;-</span>x</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a> x<span class="ot">&lt;-</span><span class="cn">NULL</span></span></code></pre></div>
+</div>
+<div id="imc-container-and-phenograph-cluster-neighborhood" class="section level3">
+<h3>IMC container and Phenograph cluster neighborhood</h3>
+<ul>
+<li>Phenograph an IMC contrainer and heatmap result.</li>
+</ul>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a> <span class="do">### create  phenotypes via Rphenograph</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">##run phenograph</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(Rphenograph)</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(igraph)</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  phenos<span class="ot">&lt;-</span><span class="fu">Rphenograph</span>(<span class="fu">t</span>(<span class="fu">cellIntensity</span>(imc)),<span class="at">k=</span><span class="dv">35</span>)</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>   pheno.labels<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(igraph<span class="sc">::</span><span class="fu">membership</span>(phenos[[<span class="dv">2</span>]]))</span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">getNetwork</span>(imc)<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">cell_clustering=</span>pheno.labels)</span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">head</span>( <span class="fu">getNetwork</span>(imc))</span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">##plot phenograph</span></span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#plot_clustering_heatmap_wrapper(myExperiment=imc)</span></span></code></pre></div>
+</div>
+<div id="histocat-analysis" class="section level3">
+<h3>histoCAT analysis</h3>
+<ul>
+<li>raw input from histoCAT and creating an IMC container.</li>
+<li>containerizes the intensities, neighborhood results, morphology, and computes nearest distances and stores it.</li>
+<li>Can use a hyperframe to identify distances quickly.</li>
+</ul>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="do">### reading in a directory of histoCAT csv files.</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a> <span class="do">##need to reconstruct the fold revised IMC data.</span></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>  <span class="do">##merges a folder full of histoCAT csv files.</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a> <span class="co"># use morphology and the 1-10 neighbors.</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>  dataSet<span class="ot">&lt;-</span><span class="cn">NULL</span></span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">c</span>(<span class="st">&quot;case8.csv&quot;</span>,<span class="st">&quot;case5.csv&quot;</span>)){</span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(i)</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>    fpath <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, i, <span class="at">package=</span><span class="st">&quot;imcExperiment&quot;</span>)</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>    case1<span class="ot">&lt;-</span><span class="fu">read.csv</span>(fpath)</span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>   proteins<span class="ot">&lt;-</span><span class="fu">colnames</span>(case1)[<span class="fu">grepl</span>(<span class="st">&quot;Cell_&quot;</span>,<span class="fu">colnames</span>(case1))]</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>   neig<span class="ot">&lt;-</span><span class="fu">colnames</span>(case1)[<span class="fu">grepl</span>(<span class="st">&quot;neighbour_&quot;</span>,<span class="fu">colnames</span>(case1))][<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>    case1<span class="ot">&lt;-</span>case1[,<span class="fu">c</span>(<span class="st">&quot;ImageId&quot;</span>,<span class="st">&quot;CellId&quot;</span>,<span class="st">&quot;X_position&quot;</span>,<span class="st">&quot;Y_position&quot;</span>,proteins,</span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;Area&quot;</span>,</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;Eccentricity&quot;</span>,</span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Solidity&quot;</span>,</span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Extent&quot;</span>,</span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Perimeter&quot;</span>,</span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>     neig)]</span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>    dataSet<span class="ot">&lt;-</span><span class="fu">rbind</span>(dataSet,case1)</span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<pre><code>## case8.csv</code></pre>
+<pre><code>## case5.csv</code></pre>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a> expr<span class="ot">&lt;-</span>dataSet[,proteins]</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>  normExp<span class="ot">&lt;-</span><span class="fu">percentilenormalize</span>(<span class="at">data=</span>expr,<span class="at">percentile=</span><span class="fl">0.99</span>)</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>  normExp<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(normExp)</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boxplot</span>(normExp)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">##spatial component</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  spatial<span class="ot">&lt;-</span>(dataSet[,<span class="fu">c</span>(<span class="st">&quot;X_position&quot;</span>,<span class="st">&quot;Y_position&quot;</span>)])</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  spatial<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(spatial)</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a> <span class="do">##uniqueLabel</span></span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>  uniqueLabel<span class="ot">&lt;-</span><span class="fu">paste0</span>(dataSet[,<span class="st">&quot;ImageId&quot;</span>],<span class="st">&quot;_&quot;</span>,dataSet[,<span class="st">&quot;CellId&quot;</span>])</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>  <span class="do">##not yet assigned</span></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>  phenotypes<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="dv">0</span>,<span class="fu">nrow</span>(dataSet),<span class="dv">1</span>)</span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>  ROIID<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">ROIID=</span>dataSet[,<span class="st">&quot;ImageId&quot;</span>])</span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>  morph<span class="ot">&lt;-</span>dataSet[,<span class="fu">c</span>(<span class="st">&quot;Area&quot;</span>,</span>
+<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;Eccentricity&quot;</span>,</span>
+<span id="cb82-12"><a href="#cb82-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Solidity&quot;</span>,</span>
+<span id="cb82-13"><a href="#cb82-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Extent&quot;</span>,</span>
+<span id="cb82-14"><a href="#cb82-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Perimeter&quot;</span>)]</span>
+<span id="cb82-15"><a href="#cb82-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb82-16"><a href="#cb82-16" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">&lt;-</span><span class="fu">imcExperiment</span>(<span class="at">cellIntensity=</span><span class="fu">t</span>(normExp),</span>
+<span id="cb82-17"><a href="#cb82-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">coordinates=</span>spatial,</span>
+<span id="cb82-18"><a href="#cb82-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">neighborHood=</span><span class="fu">as.matrix</span>(dataSet[,<span class="fu">grepl</span>(<span class="st">&quot;neighbour_&quot;</span>,<span class="fu">colnames</span>(dataSet))]),</span>
+<span id="cb82-19"><a href="#cb82-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">network=</span>phenotypes,</span>
+<span id="cb82-20"><a href="#cb82-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">distance=</span><span class="fu">matrix</span>(<span class="dv">1</span>,<span class="at">nrow=</span><span class="fu">nrow</span>(dataSet),<span class="at">ncol=</span><span class="dv">10</span>),</span>
+<span id="cb82-21"><a href="#cb82-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">morphology=</span>morph,</span>
+<span id="cb82-22"><a href="#cb82-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel=</span><span class="fu">colnames</span>(normExp),</span>
+<span id="cb82-23"><a href="#cb82-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">uniqueLabel=</span>uniqueLabel,</span>
+<span id="cb82-24"><a href="#cb82-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">ROIID=</span>ROIID)</span>
+<span id="cb82-25"><a href="#cb82-25" aria-hidden="true" tabindex="-1"></a>   x</span></code></pre></div>
+<pre><code>## class: imcExperiment 
+## dim: 34 2000 
+## metadata(0):
+## assays(1): counts
+## rownames(34): Cell_CCR4Sm149Di_Sm149 Cell_CD15Dy164Di_Dy164 ...
+##   Cell_VimentinNd143Di_Nd143 Cell_pStat3Gd158Di_Gd158
+## rowData names(0):
+## colnames(2000): 372149_1 372149_2 ... 274864_999 274864_1000
+## colData names(1): ROIID
+## reducedDimNames(0):
+## mainExpName: NULL
+## altExpNames(0):</code></pre>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>   <span class="co">#require(Rphenograph); library(igraph)</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#phenos&lt;-Rphenograph(t(cellIntensity(x)),k=35)</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pheno.labels&lt;-as.numeric(membership(phenos[[2]]))</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># getNetwork(x)&lt;-data.frame(cell_clustering=pheno.labels)</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  head(getNetwork(x))</span></span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a> <span class="do">##plot phenograph</span></span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#plot_clustering_heatmap_wrapper(myExperiment=x)</span></span></code></pre></div>
+</div>
+<div id="access-unique-cell-id" class="section level3">
+<h3>Access unique cell ID</h3>
+<ul>
+<li>getLabel(), we can access unique cell ID</li>
+<li>subsetCase(x,ROIID) can subset to a single ROIID</li>
+<li>selectCases(x,c(“ROI1”,“ROI2”,“ROI3”)) selects a subset of multiple ROIs.</li>
+</ul>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a> <span class="do">##store the ROIID in the metadata columns.</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">##access the unique cell labels.</span></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tail</span>(<span class="fu">getLabel</span>(x))</span></code></pre></div>
+<pre><code>## [1] &quot;274864_995&quot;  &quot;274864_996&quot;  &quot;274864_997&quot;  &quot;274864_998&quot;  &quot;274864_999&quot; 
+## [6] &quot;274864_1000&quot;</code></pre>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>  roi<span class="ot">&lt;-</span><span class="fu">subsetCase</span>(x,<span class="dv">372149</span> )</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  roi</span></code></pre></div>
+<pre><code>## class: imcExperiment 
+## dim: 34 1000 
+## metadata(0):
+## assays(1): counts
+## rownames(34): Cell_CCR4Sm149Di_Sm149 Cell_CD15Dy164Di_Dy164 ...
+##   Cell_VimentinNd143Di_Nd143 Cell_pStat3Gd158Di_Gd158
+## rowData names(0):
+## colnames(1000): 372149_1 372149_2 ... 372149_999 372149_1000
+## colData names(1): ROIID
+## reducedDimNames(0):
+## mainExpName: NULL
+## altExpNames(0):</code></pre>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">sapply</span>(<span class="fu">strsplit</span>(<span class="fu">getLabel</span>(roi),<span class="st">&quot;_&quot;</span>),<span class="cf">function</span>(x) x[<span class="dv">1</span>]))</span></code></pre></div>
+<pre><code>## 
+## 372149 
+##   1000</code></pre>
+</div>
+<div id="distance-computations-speedily" class="section level2">
+<h2>Distance computations speedily</h2>
+<ul>
+<li>The function ’imcExperimentToHyperFrame(), creates a point pattern useful for distance measures.</li>
+<li>Given a hyperframe pairwise computations can be done.</li>
+</ul>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">##you can append more clinical features to the columns of the sampleDat data.frame.</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>  H<span class="ot">&lt;-</span><span class="fu">imcExperimentToHyperFrame</span>(<span class="at">imcExperiment=</span>x,<span class="at">phenotypeToUse =</span> <span class="dv">1</span>)</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>  helper<span class="ot">&lt;-</span><span class="cf">function</span>(<span class="at">pp=</span><span class="cn">NULL</span>,<span class="at">i=</span><span class="cn">NULL</span>,<span class="at">j=</span><span class="cn">NULL</span>){</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>  ps<span class="ot">&lt;-</span><span class="fu">split</span>(pp)</span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>  nnd<span class="ot">&lt;-</span><span class="fu">nncross</span>(ps[[i]],ps[[j]])</span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a> <span class="do">## 1-NN analysis.</span></span>
+<span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a>  <span class="do">## compare cluster 10 to cluster 9</span></span>
+<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a>   <span class="co">#eachNND&lt;-with(H,helper(pp=point,i=&quot;10&quot;,j=&quot;8&quot;))</span></span>
+<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a> <span class="do">## first choose 2 clusters to compare.</span></span>
+<span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a> <span class="co"># sapply(eachNND,function(x) mean(x[,&quot;dist&quot;]))</span></span></code></pre></div>
+<div id="changing-class-from-imc-to-summarizedexperiment" class="section level3">
+<h3>Changing class from IMC to SummarizedExperiment</h3>
+<ul>
+<li>IMC container can change to SummarizedExperiment and the FlowSOM algorithm can be used for cell classification.</li>
+</ul>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(CATALYST)</span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flowCore)</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleCellExperiment)</span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(diffcyt)</span>
+<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a> <span class="do">## from IMCexperiment to SCE</span></span>
+<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a> sce<span class="ot">&lt;-</span> <span class="fu">SingleCellExperiment</span>(x)</span>
+<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">class</span>(sce)</span>
+<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a> <span class="do">## FIX ME: add the SOM algorithms for over-clustering and meta-clustering by using class inheritance. </span></span>
+<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a> <span class="do">#### for the cytof, the columns are sample info and the rows are cells. it uses the SummarizedExperiment format.</span></span>
+<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb92-16"><a href="#cb92-16" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb92-17"><a href="#cb92-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-18"><a href="#cb92-18" aria-hidden="true" tabindex="-1"></a> <span class="do">## change into a flowFrame?</span></span>
+<span id="cb92-19"><a href="#cb92-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-20"><a href="#cb92-20" aria-hidden="true" tabindex="-1"></a> <span class="do">## change into a daFrame (CATALYST)</span></span>
+<span id="cb92-21"><a href="#cb92-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-22"><a href="#cb92-22" aria-hidden="true" tabindex="-1"></a> <span class="co">#data(&quot;data&quot;)</span></span>
+<span id="cb92-23"><a href="#cb92-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-24"><a href="#cb92-24" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb92-25"><a href="#cb92-25" aria-hidden="true" tabindex="-1"></a> rd<span class="ot">&lt;-</span><span class="fu">DataFrame</span>(<span class="fu">colData</span>(imcdata))</span>
+<span id="cb92-26"><a href="#cb92-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-27"><a href="#cb92-27" aria-hidden="true" tabindex="-1"></a>  marker_info<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">channel_name=</span><span class="fu">sapply</span>(<span class="fu">strsplit</span>(<span class="fu">rownames</span>(imcdata),<span class="st">&quot;_&quot;</span>),<span class="cf">function</span>(x) x[<span class="dv">3</span>]),</span>
+<span id="cb92-28"><a href="#cb92-28" aria-hidden="true" tabindex="-1"></a>              <span class="at">marker_name=</span><span class="fu">rownames</span>(imcdata),</span>
+<span id="cb92-29"><a href="#cb92-29" aria-hidden="true" tabindex="-1"></a>              <span class="at">marker_class=</span><span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;type&quot;</span>,<span class="dv">13</span>),</span>
+<span id="cb92-30"><a href="#cb92-30" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">&quot;state&quot;</span>,<span class="dv">18</span>),</span>
+<span id="cb92-31"><a href="#cb92-31" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">&quot;none&quot;</span>,<span class="dv">13</span>)))</span>
+<span id="cb92-32"><a href="#cb92-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-33"><a href="#cb92-33" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Switching into Summarized Experiment class.</span></span>
+<span id="cb92-34"><a href="#cb92-34" aria-hidden="true" tabindex="-1"></a>    dse<span class="ot">&lt;-</span><span class="fu">SummarizedExperiment</span>(<span class="at">assays=</span><span class="fu">SimpleList</span>(<span class="at">exprs=</span><span class="fu">t</span>(<span class="fu">cellIntensity</span>(imcdata))),</span>
+<span id="cb92-35"><a href="#cb92-35" aria-hidden="true" tabindex="-1"></a>                           <span class="at">rowData=</span>rd,</span>
+<span id="cb92-36"><a href="#cb92-36" aria-hidden="true" tabindex="-1"></a>                           <span class="at">colData=</span><span class="fu">DataFrame</span>(marker_info)</span>
+<span id="cb92-37"><a href="#cb92-37" aria-hidden="true" tabindex="-1"></a>                           )</span>
+<span id="cb92-38"><a href="#cb92-38" aria-hidden="true" tabindex="-1"></a>   <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">colnames</span>(dse)<span class="sc">==</span>marker_info<span class="sc">$</span>marker_name))</span>
+<span id="cb92-39"><a href="#cb92-39" aria-hidden="true" tabindex="-1"></a>   dse</span>
+<span id="cb92-40"><a href="#cb92-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-41"><a href="#cb92-41" aria-hidden="true" tabindex="-1"></a> <span class="co"># Transform data recommended</span></span>
+<span id="cb92-42"><a href="#cb92-42" aria-hidden="true" tabindex="-1"></a> dse <span class="ot">&lt;-</span> <span class="fu">transformData</span>(dse)</span>
+<span id="cb92-43"><a href="#cb92-43" aria-hidden="true" tabindex="-1"></a><span class="do">## maybe look a the normalization.</span></span>
+<span id="cb92-44"><a href="#cb92-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate clusters</span></span>
+<span id="cb92-45"><a href="#cb92-45" aria-hidden="true" tabindex="-1"></a>dse <span class="ot">&lt;-</span> (<span class="fu">generateClusters</span>(dse,<span class="at">meta_clustering=</span><span class="cn">TRUE</span>,<span class="at">meta_k=</span><span class="dv">30</span>,<span class="at">seed_clustering=</span><span class="dv">828</span>))</span>
+<span id="cb92-46"><a href="#cb92-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-47"><a href="#cb92-47" aria-hidden="true" tabindex="-1"></a> <span class="do">## examine each cluster.</span></span>
+<span id="cb92-48"><a href="#cb92-48" aria-hidden="true" tabindex="-1"></a>cluster<span class="ot">&lt;-</span><span class="fu">rowData</span>(dse)</span>
+<span id="cb92-49"><a href="#cb92-49" aria-hidden="true" tabindex="-1"></a> data<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="fu">t</span>(<span class="fu">logcounts</span>(imcdata)),cluster)</span>
+<span id="cb92-50"><a href="#cb92-50" aria-hidden="true" tabindex="-1"></a> <span class="co">#plot_matrix_heatmap_wrapper(expr=data[,rownames(imcdata)],</span></span>
+<span id="cb92-51"><a href="#cb92-51" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                               cell_clustering=data$cluster_id)</span></span>
+<span id="cb92-52"><a href="#cb92-52" aria-hidden="true" tabindex="-1"></a> <span class="co">#</span></span></code></pre></div>
+</div>
+</div>
+<div id="imc-and-flowset-conversions" class="section level2">
+<h2>IMC and flowSet conversions</h2>
+<ul>
+<li>utilize CATALYST package for IMC we can see scatter plots after converting to FlowSets.</li>
+<li>the rownames for IMC are set to the panel names, and we can split these to create the marker and metal.</li>
+<li>The ROIID is useful for quickly creating a FlowSet object as a class inheritance method.</li>
+<li>The rownames of IMC container are usually in “Cell_Marker_ChannelMetal”</li>
+</ul>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>   <span class="do">## the assay returns matrix class! required for CATALYST.</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">is</span>(<span class="fu">assay</span>(imcdata,<span class="st">&#39;counts&#39;</span>),<span class="st">&#39;matrix&#39;</span>)</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames</span>(imcdata)</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for plot scatter to work need to set the rowData feature in a specific way.</span></span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>   channel<span class="ot">&lt;-</span><span class="fu">sapply</span>(<span class="fu">strsplit</span>(<span class="fu">rownames</span>(imcdata),<span class="st">&quot;_&quot;</span>),<span class="cf">function</span>(x) x[<span class="dv">3</span>])</span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>      channel[<span class="dv">34</span><span class="sc">:</span><span class="dv">35</span>]<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;Ir1911&quot;</span>,<span class="st">&quot;Ir1931&quot;</span>)</span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>   marker<span class="ot">&lt;-</span><span class="fu">sapply</span>(<span class="fu">strsplit</span>(<span class="fu">rownames</span>(imcdata),<span class="st">&quot;_&quot;</span>),<span class="cf">function</span>(x) x[<span class="dv">2</span>])</span>
+<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rowData</span>(imcdata)<span class="ot">&lt;-</span><span class="fu">DataFrame</span>(<span class="at">channel_name=</span>channel,<span class="at">marker_name=</span>marker)</span>
+<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rownames</span>(imcdata)<span class="ot">&lt;-</span>marker</span>
+<span id="cb93-11"><a href="#cb93-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">plotScatter</span>(imcdata,<span class="fu">rownames</span>(imcdata)[<span class="dv">17</span><span class="sc">:</span><span class="dv">18</span>],<span class="at">assay=</span><span class="st">&#39;counts&#39;</span>)</span>
+<span id="cb93-12"><a href="#cb93-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-13"><a href="#cb93-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert to flowSet</span></span>
+<span id="cb93-14"><a href="#cb93-14" aria-hidden="true" tabindex="-1"></a>             <span class="do">## the warning has to do with duplicated Iridium channels.</span></span>
+<span id="cb93-15"><a href="#cb93-15" aria-hidden="true" tabindex="-1"></a>   <span class="fu">table</span>(<span class="fu">colData</span>(imcdata)<span class="sc">$</span>ROIID)</span>
+<span id="cb93-16"><a href="#cb93-16" aria-hidden="true" tabindex="-1"></a>       (fsimc <span class="ot">&lt;-</span> <span class="fu">sce2fcs</span>(imcdata, <span class="at">split_by =</span> <span class="st">&quot;ROIID&quot;</span>))</span>
+<span id="cb93-17"><a href="#cb93-17" aria-hidden="true" tabindex="-1"></a>    <span class="do">## now we have a flowSet.</span></span>
+<span id="cb93-18"><a href="#cb93-18" aria-hidden="true" tabindex="-1"></a>   <span class="fu">pData</span>(fsimc)</span>
+<span id="cb93-19"><a href="#cb93-19" aria-hidden="true" tabindex="-1"></a>   <span class="fu">fsApply</span>(fsimc,nrow)</span>
+<span id="cb93-20"><a href="#cb93-20" aria-hidden="true" tabindex="-1"></a>   <span class="fu">dim</span>(<span class="fu">exprs</span>(fsimc[[<span class="dv">1</span>]]))</span>
+<span id="cb93-21"><a href="#cb93-21" aria-hidden="true" tabindex="-1"></a>   <span class="fu">exprs</span>(fsimc[[<span class="dv">1</span>]])[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb93-22"><a href="#cb93-22" aria-hidden="true" tabindex="-1"></a>    <span class="do">## set up the metadata files.</span></span>
+<span id="cb93-23"><a href="#cb93-23" aria-hidden="true" tabindex="-1"></a>   <span class="fu">head</span>(marker_info)</span>
+<span id="cb93-24"><a href="#cb93-24" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb93-25"><a href="#cb93-25" aria-hidden="true" tabindex="-1"></a>    exper_info<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">group_id=</span><span class="fu">colData</span>(imcdata)<span class="sc">$</span>Treatment[<span class="fu">match</span>(<span class="fu">pData</span>(fsimc)<span class="sc">$</span>name,<span class="fu">colData</span>(imcdata)<span class="sc">$</span>ROIID)],</span>
+<span id="cb93-26"><a href="#cb93-26" aria-hidden="true" tabindex="-1"></a>                           <span class="at">patient_id=</span><span class="fu">colData</span>(imcdata)<span class="sc">$</span>Patient.Number[<span class="fu">match</span>(<span class="fu">pData</span>(fsimc)<span class="sc">$</span>name,<span class="fu">colData</span>(imcdata)<span class="sc">$</span>ROIID)],</span>
+<span id="cb93-27"><a href="#cb93-27" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sample_id=</span><span class="fu">pData</span>(fsimc)<span class="sc">$</span>name)</span>
+<span id="cb93-28"><a href="#cb93-28" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb93-29"><a href="#cb93-29" aria-hidden="true" tabindex="-1"></a>   <span class="do">## create design</span></span>
+<span id="cb93-30"><a href="#cb93-30" aria-hidden="true" tabindex="-1"></a>   design<span class="ot">&lt;-</span><span class="fu">createDesignMatrix</span>(</span>
+<span id="cb93-31"><a href="#cb93-31" aria-hidden="true" tabindex="-1"></a>     exper_info,<span class="at">cols_design=</span><span class="fu">c</span>(<span class="st">&quot;group_id&quot;</span>,<span class="st">&quot;patient_id&quot;</span>))</span>
+<span id="cb93-32"><a href="#cb93-32" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb93-33"><a href="#cb93-33" aria-hidden="true" tabindex="-1"></a>   <span class="do">##set up contrast </span></span>
+<span id="cb93-34"><a href="#cb93-34" aria-hidden="true" tabindex="-1"></a>   contrast<span class="ot">&lt;-</span><span class="fu">createContrast</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span>
+<span id="cb93-35"><a href="#cb93-35" aria-hidden="true" tabindex="-1"></a>   <span class="fu">nrow</span>(contrast)<span class="sc">==</span><span class="fu">ncol</span>(design)</span>
+<span id="cb93-36"><a href="#cb93-36" aria-hidden="true" tabindex="-1"></a>   <span class="fu">data.frame</span>(<span class="at">parameters=</span><span class="fu">colnames</span>(design),contrast)</span>
+<span id="cb93-37"><a href="#cb93-37" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb93-38"><a href="#cb93-38" aria-hidden="true" tabindex="-1"></a>    <span class="do">## flowSet to DiffCyt</span></span>
+<span id="cb93-39"><a href="#cb93-39" aria-hidden="true" tabindex="-1"></a>    out_DA<span class="ot">&lt;-</span><span class="fu">diffcyt</span>(</span>
+<span id="cb93-40"><a href="#cb93-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">d_input=</span>fsimc,</span>
+<span id="cb93-41"><a href="#cb93-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">experiment_info=</span>exper_info,</span>
+<span id="cb93-42"><a href="#cb93-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">marker_info=</span>marker_info,</span>
+<span id="cb93-43"><a href="#cb93-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">design=</span>design,</span>
+<span id="cb93-44"><a href="#cb93-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">contrast=</span>contrast,</span>
+<span id="cb93-45"><a href="#cb93-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">analysis_type =</span> <span class="st">&quot;DA&quot;</span>,</span>
+<span id="cb93-46"><a href="#cb93-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed_clustering =</span> <span class="dv">123</span></span>
+<span id="cb93-47"><a href="#cb93-47" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb93-48"><a href="#cb93-48" aria-hidden="true" tabindex="-1"></a>   <span class="fu">topTable</span>(out_DA,<span class="at">format_vals =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb93-49"><a href="#cb93-49" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb93-50"><a href="#cb93-50" aria-hidden="true" tabindex="-1"></a>   out_DS<span class="ot">&lt;-</span><span class="fu">diffcyt</span>(</span>
+<span id="cb93-51"><a href="#cb93-51" aria-hidden="true" tabindex="-1"></a>     <span class="at">d_input=</span>fsimc,</span>
+<span id="cb93-52"><a href="#cb93-52" aria-hidden="true" tabindex="-1"></a>     <span class="at">experiment_info=</span>exper_info,</span>
+<span id="cb93-53"><a href="#cb93-53" aria-hidden="true" tabindex="-1"></a>     <span class="at">marker_info=</span>marker_info,</span>
+<span id="cb93-54"><a href="#cb93-54" aria-hidden="true" tabindex="-1"></a>     <span class="at">design=</span>design,</span>
+<span id="cb93-55"><a href="#cb93-55" aria-hidden="true" tabindex="-1"></a>     <span class="at">contrast=</span>contrast,</span>
+<span id="cb93-56"><a href="#cb93-56" aria-hidden="true" tabindex="-1"></a>     <span class="at">analysis_type=</span><span class="st">&#39;DS&#39;</span>,</span>
+<span id="cb93-57"><a href="#cb93-57" aria-hidden="true" tabindex="-1"></a>     <span class="at">seed_clustering =</span> <span class="dv">123</span>,</span>
+<span id="cb93-58"><a href="#cb93-58" aria-hidden="true" tabindex="-1"></a>     <span class="at">plot=</span><span class="cn">FALSE</span>)</span>
+<span id="cb93-59"><a href="#cb93-59" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb93-60"><a href="#cb93-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">topTable</span>(out_DS,<span class="at">format_vals =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb93-61"><a href="#cb93-61" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb93-62"><a href="#cb93-62" aria-hidden="true" tabindex="-1"></a>       <span class="do">### from flowSet to SE.</span></span>
+<span id="cb93-63"><a href="#cb93-63" aria-hidden="true" tabindex="-1"></a> d_se<span class="ot">&lt;-</span><span class="fu">prepareData</span>(fsimc,exper_info,marker_info)</span></code></pre></div>
+<div id="diffcyt-package-tutorial-extra" class="section level3">
+<h3>Diffcyt package tutorial (extra)</h3>
+<ul>
+<li>Given a flowSet object we can utilize the diffCyt package for measuring phenotype differences.</li>
+<li>This code section is an example of diffcyt from their manual.</li>
+<li>Creates a random summarized experiment.</li>
+</ul>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(diffcyt)</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create random data (one sample)</span></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>d_random <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">20000</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>, <span class="at">ncol =</span> <span class="dv">20</span>, <span class="at">cofactor =</span> <span class="dv">5</span>) {</span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">sinh</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(n, mean, sd), <span class="at">ncol =</span> ncol)) <span class="sc">*</span> cofactor</span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(d) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;marker&quot;</span>, <span class="fu">sprintf</span>(<span class="st">&quot;%02d&quot;</span>, <span class="dv">1</span><span class="sc">:</span>ncol))</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a>  d</span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create random data (without differential signal)</span></span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>d_input <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample1 =</span> <span class="fu">d_random</span>(), </span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample2 =</span> <span class="fu">d_random</span>(), </span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample3 =</span> <span class="fu">d_random</span>(), </span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample4 =</span> <span class="fu">d_random</span>()</span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb94-16"><a href="#cb94-16" aria-hidden="true" tabindex="-1"></a>experiment_info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb94-17"><a href="#cb94-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">factor</span>(<span class="fu">paste0</span>(<span class="st">&quot;sample&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)), </span>
+<span id="cb94-18"><a href="#cb94-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_id =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;group1&quot;</span>, <span class="st">&quot;group1&quot;</span>, <span class="st">&quot;group2&quot;</span>, <span class="st">&quot;group2&quot;</span>)), </span>
+<span id="cb94-19"><a href="#cb94-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb94-20"><a href="#cb94-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb94-21"><a href="#cb94-21" aria-hidden="true" tabindex="-1"></a>marker_info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb94-22"><a href="#cb94-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">channel_name =</span> <span class="fu">paste0</span>(<span class="st">&quot;channel&quot;</span>, <span class="fu">sprintf</span>(<span class="st">&quot;%03d&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>)), </span>
+<span id="cb94-23"><a href="#cb94-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">marker_name =</span> <span class="fu">paste0</span>(<span class="st">&quot;marker&quot;</span>, <span class="fu">sprintf</span>(<span class="st">&quot;%02d&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>)), </span>
+<span id="cb94-24"><a href="#cb94-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">marker_class =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;type&quot;</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">&quot;state&quot;</span>, <span class="dv">10</span>)), </span>
+<span id="cb94-25"><a href="#cb94-25" aria-hidden="true" tabindex="-1"></a>                        <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;type&quot;</span>, <span class="st">&quot;state&quot;</span>, <span class="st">&quot;none&quot;</span>)), </span>
+<span id="cb94-26"><a href="#cb94-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb94-27"><a href="#cb94-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb94-28"><a href="#cb94-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data</span></span>
+<span id="cb94-29"><a href="#cb94-29" aria-hidden="true" tabindex="-1"></a>d_se <span class="ot">&lt;-</span> <span class="fu">prepareData</span>(d_input, experiment_info, marker_info)</span>
+<span id="cb94-30"><a href="#cb94-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform data</span></span>
+<span id="cb94-31"><a href="#cb94-31" aria-hidden="true" tabindex="-1"></a>d_se <span class="ot">&lt;-</span> <span class="fu">transformData</span>(d_se)</span>
+<span id="cb94-32"><a href="#cb94-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate clusters</span></span>
+<span id="cb94-33"><a href="#cb94-33" aria-hidden="true" tabindex="-1"></a>d_se <span class="ot">&lt;-</span> <span class="fu">generateClusters</span>(d_se)</span></code></pre></div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
